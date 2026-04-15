@@ -1,92 +1,168 @@
-import React from "react";
-import { useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
- 
- 
+import React, { useState } from "react";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity
+} from "react-native";
+
 type LoginProps = {
-    irParaCadastro: () => void;
+  irParaCadastro: () => void;
 };
- 
-function Login ({irParaCadastro }: LoginProps) {
- 
-    const [email, setEmail] = useState('');
- 
-    const [senha, setSenha] = useState('');
- 
-    const [mensagem, setMensagem] = useState('');
- 
-    const entrar = () => {
- 
-        console.log('Tentando login com:', {email, senha});
- 
-        Alert.alert('Login', 'Botão entrar clicado com sucesso!')
- 
-        setMensagem(`Bem-vindo(a)! login tentando com o email: ${email}`)
+
+export default function Login({ irParaCadastro }: LoginProps) {
+
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mensagem, setMensagem] = useState('');
+
+  const validar = () => {
+    if (!email.trim() || !senha.trim()) {
+      Alert.alert('Erro', 'Preencha todos os campos');
+      return false;
     }
- 
- 
-    return (
- 
-        <View style={styles.container}>
+
+    if (!email.includes('@')) {
+      Alert.alert('Erro', 'Email inválido');
+      return false;
+    }
+
+    return true;
+  };
+
+  const entrar = () => {
+    if (!validar()) return;
+
+    Alert.alert('Sucesso', 'Login realizado!');
+    setMensagem(`Bem-vindo(a), ${email}`);
+
+    setEmail('');
+    setSenha('');
+  };
+
+  return (
+    <View style={styles.container}>
+
+      <Text style={styles.logo}>MeuApp</Text>
+
+      <View style={styles.card}>
         <Text style={styles.titulo}>Login</Text>
- 
+
         <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#999"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
-        <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        value={senha}
-        onChangeText={setSenha}
-        secureTextEntry
-        /> <View style={styles.botao}>
-            <Button title="Entrar" onPress={entrar}/>
+
+        {/* SENHA COM OLHO */}
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputSenha}
+            placeholder="Senha"
+            placeholderTextColor="#999"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!mostrarSenha}
+          />
+
+          <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+            <Text style={styles.olho}>
+              {mostrarSenha ? '🙈' : '👁️'}
+            </Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.botao}>
-        <Button title="Ir para Cadastro" onPress={irParaCadastro}/>
-        </View>
-        {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
-        </View>
-    );
+
+        <TouchableOpacity style={styles.botao} onPress={entrar}>
+          <Text style={styles.textoBotao}>ENTRAR</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={irParaCadastro}>
+          <Text style={styles.link}>Não tem conta? Cadastre-se</Text>
+        </TouchableOpacity>
+
+        {mensagem ? (
+          <Text style={styles.mensagem}>{mensagem}</Text>
+        ) : null}
+
+      </View>
+
+    </View>
+  );
 }
- 
+
 const styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 24
-       
-    },
-    titulo: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        marginBottom: 24,
- 
-    },
-    input: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: '#cccccccc',
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
- 
-    },
-    botao: {
-        width: '100%',
-        marginTop: 8,
- 
-    },
-    mensagem: {
-        marginTop: 16,
-        textAlign: 'center',
-        color: '#1f7a1f',
- 
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#2971b8',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+  },
+  card: {
+    width: '90%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 16,
+    elevation: 5,
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  input: {
+    backgroundColor: '#f2f2f2',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
+    borderRadius: 10,
+    marginBottom: 12,
+    paddingHorizontal: 10,
+  },
+  inputSenha: {
+    flex: 1,
+    padding: 12,
+  },
+  olho: {
+    fontSize: 18,
+  },
+  botao: {
+    backgroundColor: '#1E90FF',
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  textoBotao: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  link: {
+    marginTop: 15,
+    textAlign: 'center',
+    color: '#1E90FF',
+  },
+  mensagem: {
+    marginTop: 15,
+    textAlign: 'center',
+    color: 'green',
+    fontWeight: 'bold',
+  },
 });
-export default Login;
